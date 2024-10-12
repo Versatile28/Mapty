@@ -11,12 +11,27 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
-if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition((position)=>{
-        const {latitude} = position.coords;
-        const {longitude} = position.coords;
-        console.log(`https://www.google.com/maps/@${latitude},${longitude}`);
-    },()=>{
-        alert('Could not get your position');
-    });
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const { latitude } = position.coords;
+      const { longitude } = position.coords;
+      const coords = [latitude,longitude];
+      
+      const map = L.map('map').setView(coords, 14);
+
+      L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      L.marker(coords)
+        .addTo(map)
+        .bindPopup('A pretty CSS popup.<br> Easily customizable.')
+        .openPopup();
+    },
+    () => {
+      alert('Could not get your position');
+    }
+  );
 }
