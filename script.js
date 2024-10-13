@@ -60,6 +60,7 @@ class Cycling extends Workout{
 class App {
     #map;
     #mapEvent;
+    #workout=[];
     constructor() {
         this._getPosition();
 
@@ -106,21 +107,41 @@ class App {
     }
 
     _newWorkout(e) {
-        e.preventDefault();
+
+        const validInputs = (...inputs) => inputs.every(inp => Number.isFinite(inp));
+        const allPositive = (...inputs) => inputs.every(inp=>inp>0);
+        e.preventDefault();   
 
         const type = inputType.value;
-        const distance = inputDistance.value;
-        const duration = inputDuration.value;
+        const distance = +inputDistance.value;
+        const duration = +inputDuration.value;
+        const { lat, lng } = this.#mapEvent.latlng;
+        let workout;
+
+        console.log(type);
+        console.log(distance);
+        console.log(duration);
+        
 
         if(type === 'running'){
             const cadance = +inputCadence.value;
-            if(!Number.isFinite(distance) || !Number.isFinite(duration) || !Number.isFinite(cadance)) return alert('Inputs have to be positive numbers!');
+            console.log(cadance);
+            if(!validInputs(distance, duration, cadance) || !allPositive(distance, duration, cadance)){
+                return alert('Inputs have to be positive numbers!');
+            }
+            workout = new Running([lat, lng],distance,duration,cadance);
         }
+
 
         if(type === 'cycling'){
             const elevation = +inputElevation.value;
-            if(!Number.isFinite(distance) || !Number.isFinite(duration) || !Number.isFinite(elivationGain)) return alert('Inputs have to be positive numbers!');
+            if(!validInputs(distance, duration, elevation) || !allPositive(distance, duration)){
+                return alert('Inputs have to be positive numbers!');
+            }
+            workout = new Cycling([lat, lng],distance,duration,elevation);
         }
+
+        this.#workout.push(workout);
 
         inputDistance.value =
             inputDuration.value =
@@ -128,7 +149,7 @@ class App {
             inputElevation.value =
             '';
 
-        const { lat, lng } = this.#mapEvent.latlng;
+
 
         L.marker([lat, lng])
             .addTo(this.#map)
