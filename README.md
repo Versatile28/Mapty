@@ -84,4 +84,4 @@ The Mapty app's workflow is divided into the following stages:
 
 ## Author
 
-- Website - [Satyaki Pal](www.linkedin.com/in/sp2812)
+- Website - [Satyaki Pal](https://www.linkedin.com/in/sp2812)
